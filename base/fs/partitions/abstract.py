@@ -57,6 +57,8 @@ class AbstractPartition(FSMProxy):
 		return self.get_start() + self.size
 
 	def _before_format(self, e):
+		import time
+		time.sleep(10)
 		mkfs = '/sbin/mkfs.{fs}'.format(fs=self.filesystem)
 		log_check_call([mkfs, self.device_path])
 

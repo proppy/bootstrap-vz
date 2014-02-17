@@ -39,11 +39,13 @@ class AbstractPartitionMap(FSMProxy):
 		try:
 			mappings = log_check_call(['/sbin/kpartx', '-l', volume.device_path])
 			import re
+			import time
 			regexp = re.compile('^(?P<name>.+[^\d](?P<p_idx>\d+)) : '
 			                    '(?P<start_blk>\d) (?P<num_blks>\d+) '
 			                    '{device_path} (?P<blk_offset>\d+)$'
 			                    .format(device_path=volume.device_path))
-			log_check_call(['/sbin/kpartx', '-a', volume.device_path])
+			log_check_call(['/sbin/kpartx', '-av', volume.device_path])
+			time.sleep(10)
 			import os.path
 			for mapping in mappings:
 				match = regexp.match(mapping)

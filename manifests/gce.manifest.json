@@ -1,0 +1,59 @@
+{
+	"provider": "gce",
+	"bootstrapper": {
+		"workspace":      "/target"
+	},
+	"image": {
+		"name":        "disk",
+		"description": "Debian {system.release} {system.architecture}"
+	},
+	"system": {
+		"release":      "wheezy",
+		"sections":     ["main", "contrib", "non-free"],
+		"architecture": "amd64",
+		"bootloader":   "grub",
+		"timezone":     "UTC",
+		"locale":       "en_US",
+		"charmap":      "UTF-8"
+	},
+	"packages": {
+		"mirror": "http://gce_debian_mirror.storage.googleapis.com/",
+		"sources": {
+			"main": [
+				"deb http://http.debian.net/debian {system.release} main contrib non-free",
+				"deb-src http://http.debian.net/debian {system.release} main contrib non-free"
+				],
+			"backports": [
+				"deb http://http.debian.net/debian {system.release}-backports main contrib non-free",
+				"deb-src http://http.debian.net/debian {system.release}-backports main contrib non-free"
+				],
+			"goog": [
+				"deb http://goog-repo.appspot.com/debian pigeon main"
+				]
+			},
+		"install": [
+			"google-compute-daemon",
+			"google-startup-scripts",
+			"python-gcimagebundle",
+			"gcutil",
+			"python",
+			"sudo",
+			"ntp",
+			"lsb-release",
+			"acpi-support-base",
+			"openssh-client",
+			"openssh-server",
+			"dhcpd"
+			]
+		},
+	"volume": {
+		"backing": "raw",
+		"partitions": {
+			"type": "msdos",
+			"root": {
+				"size":       "10GiB",
+				"filesystem": "ext4"
+			}
+		}
+	}
+}

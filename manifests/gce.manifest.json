@@ -14,37 +14,12 @@
 		"bootloader":   "grub",
 		"timezone":     "UTC",
 		"locale":       "en_US",
-		"charmap":      "UTF-8"
+		"charmap":      "UTF-8",
+		"backported_kernel": true,
+		"ntpserver":    "metadata.google.internal"
 	},
 	"packages": {
-		"mirror": "http://gce_debian_mirror.storage.googleapis.com/",
-		"sources": {
-			"main": [
-				"deb http://http.debian.net/debian {system.release} main contrib non-free",
-				"deb-src http://http.debian.net/debian {system.release} main contrib non-free"
-				],
-			"backports": [
-				"deb http://http.debian.net/debian {system.release}-backports main contrib non-free",
-				"deb-src http://http.debian.net/debian {system.release}-backports main contrib non-free"
-				],
-			"goog": [
-				"deb http://goog-repo.appspot.com/debian pigeon main"
-				]
-			},
-		"install": [
-			"google-compute-daemon",
-			"google-startup-scripts",
-			"python-gcimagebundle",
-			"gcutil",
-			"python",
-			"sudo",
-			"ntp",
-			"lsb-release",
-			"acpi-support-base",
-			"openssh-client",
-			"openssh-server",
-			"dhcpd"
-			]
+		"mirror": "http://gce_debian_mirror.storage.googleapis.com/"
 		},
 	"volume": {
 		"backing": "raw",

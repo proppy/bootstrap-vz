@@ -1,7 +1,7 @@
 import tasks.apt
 import tasks.boot
 import tasks.image
-import tasks.ntp
+import tasks.host
 import tasks.packages
 from common.tasks import volume
 from common.tasks import loopback
@@ -42,8 +42,11 @@ def resolve_tasks(tasklist, manifest):
 	tasklist.update([
 			plugins.cloud_init.tasks.AddBackports,
 			loopback.Create,
+			tasks.apt.SetPackageRepositories,
+			tasks.apt.PreferKernelsFromBackports,
 			tasks.apt.ImportGoogleKey,
-			tasks.packages.AddKernel,
+			tasks.packages.DefaultPackages,
+			tasks.packages.GooglePackages,
 			tasks.packages.InstallGSUtil,
 
 			security.EnableShadowConfig,
@@ -51,7 +54,9 @@ def resolve_tasks(tasklist, manifest):
 #	                network.RemoveHostname,
 	                network.ConfigureNetworkIF,
 #	                providers.ec2.tasks.network.EnableDHCPCDDNS,
-			tasks.ntp.FixNTPServer,
+			tasks.host.FixNTPServer,
+			tasks.host.DisableIPv6,
+			tasks.host.SetHostname,
 			tasks.boot.ConfigureGrub,
 			initd.AddSSHKeyGeneration,
 			initd.InstallInitScripts,
@@ -75,21 +80,10 @@ def resolve_rollback_tasks(tasklist, manifest, counter_task):
 	counter_task(workspace.CreateWorkspace, workspace.DeleteWorkspace)
 
 
-#TASK_CREATE_VOLUME="10-create-volume"
-#TASK_MOUNT_VOLUME="13-mount-volume"
-#TASK_BOOTSTRAP="14-bootstrap"
-#TASK_MOUNT_SPECIALS="15-mount-specials"
 #TASK_APT_SOURCES="21-apt-sources"
 #TASK_APT_UPGRADE="22-apt-upgrade"
-#TASK_UNMOUNT_SPECIALS="71-unmount-specials"
-#TASK_UNMOUNT_VOLUME="72-unmount-volume"
-#TASK_DELETE_VOLUME="73-delete-loopback"
 #TASK_REGISTER_IMAGE="95-register-image"
 
-#--arch)                 arch=$2;                       shift 2 ;;
-#--codename)             codename=$2;                   shift 2 ;;
-#--filesystem)           filesystem=$2;                 shift 2 ;;
-#--volume-size)          volume_size=$2;                shift 2 ;;
 #--name)                 name_suffix=$2;                shift 2 ;;
 #--description)          description=$2;                shift 2 ;;
 #--apt-mirrors)          apt_mirrors=$2;                shift 2 ;;
@@ -98,7 +92,3 @@ def resolve_rollback_tasks(tasklist, manifest, counter_task):
 #--gcs-dest)             gcs_dest=$2;                   shift 2 ;;
 #--gce-project)          gce_project=$2;                shift 2 ;;
 #--gce-kernel)           gce_kernel=$2;                 shift 2 ;;
-#--timezone)             timezone=$2;                   shift 2 ;;
-#--locale)               locale=$2;                     shift 2 ;;
-#--charmap)              charmap=$2;                    shift 2 ;;
-#--plugin)               plugins+=("$2");               shift 2 ;;

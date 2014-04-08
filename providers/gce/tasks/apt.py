@@ -50,3 +50,17 @@ class ImportGoogleKey(Task):
 		log_check_call(['/usr/bin/wget', 'https://goog-repo.appspot.com/debian/key/public.gpg.key', '-O', key_file])
 		log_check_call(['/usr/sbin/chroot', info.root, '/usr/bin/apt-key', 'add', 'google.gpg.key'])
 		os.remove(key_file)
+
+class CleanGoogleRepositoriesAndKeys(Task):
+	description = 'Removing Google key and apt source files'
+	phase = phases.system_cleaning
+	successors = [apt.AptClean]
+
+	@classmethod
+	def run(cls, info):
+		key_id = log_check_call(['/usr/sbin/chroot', info.root, 'apt-key adv --with-colons --list-keys | awk -F: "$10 ~ /@google\.com/ { print $5 }"'])
+		log_check_call(['/usr/sbin/chroot', info.root, '/usr/bin/apt-key', 'del', key_id])
+		apt_file = os.path.join(info.root, 'etc/apt/sources.list.d/goog.list')
+		os.remove(key_file)
+		log_check_call(['/usr/sbin/chroot', info.root,
+				'/usr/bin/apt-get', 'update'])

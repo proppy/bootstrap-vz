@@ -6,7 +6,7 @@ from common.tools import log_check_call
 import os.path
 
 class CreateTarball(Task):
-	description = 'Create tarball with image'
+	description = 'Creating tarball with image'
 	phase = phases.image_registration
 	predecessors = [loopback.MoveImage]
 
@@ -17,20 +17,38 @@ class CreateTarball(Task):
 		filename = '{image_name}.{ext}'.format(
 			image_name=image_name,
 			ext=info.volume.extension)
-		distribution = 'debian'
-		lsb_release = '7'
-#		distribution = log_check_call(['/usr/sbin/chroot', info.root,
-#			'/usr/bin/lsb_release', '-d', '-s'])
-#		lsb_release = log_check_call(['/usr/sbin/chroot', info.root,
-#			'/usr/bin/lsb_release', '-r', '-s'])
 		today = datetime.datetime.today()
 		name_suffix = today.strftime('%Y%m%d')
-		tarball_name = '{distribution}-{lsb_release}-{release}-v{name_suffix}.tar.gz'.format(
-			distribution=distribution,
-			lsb_release=lsb_release,
+		image_name = '{lsb_distribution}-{lsb_release}-{release}-v{name_suffix}'.format(
+			lsb_distribution=info.gce['lsb_distribution'],
+			lsb_release=info.gce['lsb_release'],
 			release=info.manifest.system['release'],
 			name_suffix=name_suffix)
+		info.gce['image_name'] = image_name
+		tarball_name = '{image_name}.tar.gz'.format(image_name=image_name)
 		tarball_path = os.path.join(info.manifest.bootstrapper['workspace'], tarball_name)
+		info.gce['tarball_name'] = tarball_name
+		info.gce['tarball_path'] = tarball_path
 		log_check_call(['/bin/tar', '--sparse',
 			'-C', info.manifest.bootstrapper['workspace'],
 			'-caf', tarball_path, filename])
+
+class RegisterImage(Task):
+	description = 'Registering image with GCE'
+	phase = phases.image_registration
+	predecessors = [CreateTarball]
+
+	@classmethod
+	def run(cls, info):
+		image_description = info.gce['lsb_description']
+		if 'description' in info.manifest.image:
+			image_description = info.manifest.image['description']
+		if 'gcs_destination' in info.manifest.image:
+			log_check_call(['gsutil', 'cp',
+				info.gce['tarball_path'],
+				info.manifest.image['gcs_destination']+info.gce['tarball_name']])
+		if 'gcs_destination' in info.manifest.image and 'gce_project' in info.manifest.image:
+			log_check_call(['gcutil', '--project={}'.format(info.manifest.image['gce_project']),
+				'addimage', info.gce['image_name'],
+				info.manifest.image['gcs_destination']+info.gce['tarball_name'],
+				'--destription={}'.format(image_description)])

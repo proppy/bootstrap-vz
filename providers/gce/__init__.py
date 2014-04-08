@@ -1,5 +1,6 @@
 import tasks.apt
 import tasks.boot
+import tasks.configuration
 import tasks.image
 import tasks.host
 import tasks.packages
@@ -49,20 +50,23 @@ def resolve_tasks(tasklist, manifest):
 			tasks.packages.GooglePackages,
 			tasks.packages.InstallGSUtil,
 
+			tasks.configuration.GatherReleaseInformation,
+
 			security.EnableShadowConfig,
-#	                network.RemoveDNSInfo,
-#	                network.RemoveHostname,
+	                network.RemoveDNSInfo,
+	                network.RemoveHostname,
 	                network.ConfigureNetworkIF,
-#	                providers.ec2.tasks.network.EnableDHCPCDDNS,
 			tasks.host.FixNTPServer,
 			tasks.host.DisableIPv6,
 			tasks.host.SetHostname,
 			tasks.boot.ConfigureGrub,
 			initd.AddSSHKeyGeneration,
 			initd.InstallInitScripts,
+			tasks.apt.CleanGoogleRepositoriesAndKeys,
 
 			loopback.MoveImage,
 			tasks.image.CreateTarball,
+			tasks.image.RegisterImage,
 			])
 
 	tasklist.update(common.task_sets.get_fs_specific_set(manifest.volume['partitions']))
@@ -78,17 +82,3 @@ def resolve_rollback_tasks(tasklist, manifest, counter_task):
 	counter_task(filesystem.MountRoot, filesystem.UnmountRoot)
 	counter_task(volume.Attach, volume.Detach)
 	counter_task(workspace.CreateWorkspace, workspace.DeleteWorkspace)
-
-
-#TASK_APT_SOURCES="21-apt-sources"
-#TASK_APT_UPGRADE="22-apt-upgrade"
-#TASK_REGISTER_IMAGE="95-register-image"
-
-#--name)                 name_suffix=$2;                shift 2 ;;
-#--description)          description=$2;                shift 2 ;;
-#--apt-mirrors)          apt_mirrors=$2;                shift 2 ;;
-#--backports-mirrors)    backports_mirrors=$2;          shift 2 ;;
-#--use-backports-kernel) use_backports_kernel=$2;       shift 2 ;;
-#--gcs-dest)             gcs_dest=$2;                   shift 2 ;;
-#--gce-project)          gce_project=$2;                shift 2 ;;
-#--gce-kernel)           gce_kernel=$2;                 shift 2 ;;

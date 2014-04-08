@@ -36,6 +36,9 @@ class BootstrapInformation(object):
 		self.manifest_vars['apt_mirror'] = self.apt_mirror
 		set_manifest_vars(self.manifest_vars, self.manifest.data)
 
+		# Create dictionary for provider-specific data
+		setattr(self, self.manifest.provider, {})
+
 		from datetime import datetime
 		now = datetime.now()
 		time_vars = ['%a', '%A', '%b', '%B', '%c', '%d', '%f', '%H',

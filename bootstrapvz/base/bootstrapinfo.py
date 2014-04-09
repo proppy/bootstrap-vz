@@ -63,6 +63,9 @@ class BootstrapInformation(object):
 				if not isinstance(value, list):
 					obj[key] = value
 
+		# dictionary for provider-specific data
+		setattr(self, self.manifest.provider, {})
+
 		# manifest_vars is a dictionary of all the manifest values,
 		# with it users can cross-reference values in the manifest, so that they do not need to be written twice
 		self.manifest_vars = {}

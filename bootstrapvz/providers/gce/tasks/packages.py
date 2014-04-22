@@ -21,9 +21,6 @@ class DefaultPackages(Task):
 		info.packages.add('openssh-client')
 		info.packages.add('openssh-server')
 		info.packages.add('dhcpd')
-# Excluded in EC2, should we exclude them?
-#		info.exclude_packages.add('isc-dhcp-client')
-#		info.exclude_packages.add('isc-dhcp-common')
 
 		kernel_packages_path = os.path.join(os.path.dirname(__file__), '../../ec2/tasks/packages-kernels.json')
 		from bootstrapvz.common.tools import config_get
@@ -51,9 +48,14 @@ class InstallGSUtil(Task):
 
 	@classmethod
 	def run(cls, info):
-		log_check_call(['/usr/bin/wget', 'http://storage.googleapis.com/pub/gsutil.tar.gz'])
-		gsutil_directory = os.path.join(info.root, 'usr/local/share/google')
-		gsutil_binary = os.path.join(os.path.join(info.root, 'usr/local/bin'), 'gsutil')
+		log_check_call(['wget',
+			'http://storage.googleapis.com/pub/gsutil.tar.gz'])
+		gsutil_directory = os.path.join(info.root,
+			'usr/local/share/google')
+		gsutil_binary = os.path.join(os.path.join(info.root,
+			'usr/local/bin'), 'gsutil')
 		os.makedirs(gsutil_directory)
-		log_check_call(['/bin/tar', 'xaf', 'gsutil.tar.gz', '-C', gsutil_directory])
-		log_check_call(['/bin/ln', '-s', '../share/google/gsutil/gsutil', gsutil_binary])
+		log_check_call(['tar', 'xaf', 'gsutil.tar.gz',
+			'-C', gsutil_directory])
+		log_check_call(['ln', '-s',
+			'../share/google/gsutil/gsutil', gsutil_binary])

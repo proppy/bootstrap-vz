@@ -23,14 +23,7 @@
 				"bootloader": {
 					"type": "string",
 					"enum": ["grub", "extlinux"]
-				},
-				"ntpserver": {
-					"type": "string"
-				},
-				"backported_kernel": {
-					"type": "boolean"
 				}
-
 			}
 		},
 		"volume": {

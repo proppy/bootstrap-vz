@@ -16,6 +16,7 @@ from bootstrapvz.common.tasks import cleanup
 from bootstrapvz.common.tasks import workspace
 import bootstrapvz.plugins.cloud_init.tasks
 
+
 def initialize():
 	pass
 
@@ -40,33 +41,31 @@ def resolve_tasks(tasklist, manifest):
 		tasklist.update(bootstrapvz.common.task_sets.partitioning_set)
 
 	tasklist.update([
-			bootstrapvz.plugins.cloud_init.tasks.AddBackports,
-			loopback.Create,
-			tasks.apt.SetPackageRepositories,
-			tasks.apt.PreferKernelsFromBackports,
-			tasks.apt.ImportGoogleKey,
-			tasks.packages.DefaultPackages,
-			tasks.packages.GooglePackages,
-			tasks.packages.InstallGSUtil,
+		bootstrapvz.plugins.cloud_init.tasks.AddBackports,
+		loopback.Create,
+		tasks.apt.SetPackageRepositories,
+		tasks.apt.ImportGoogleKey,
+		tasks.packages.DefaultPackages,
+		tasks.packages.GooglePackages,
+		tasks.packages.InstallGSUtil,
 
-			tasks.configuration.GatherReleaseInformation,
+		tasks.configuration.GatherReleaseInformation,
 
-			security.EnableShadowConfig,
-	                network.RemoveDNSInfo,
-	                network.RemoveHostname,
-	                network.ConfigureNetworkIF,
-			tasks.host.FixNTPServer,
-			tasks.host.DisableIPv6,
-			tasks.host.SetHostname,
-			tasks.boot.ConfigureGrub,
-			initd.AddSSHKeyGeneration,
-			initd.InstallInitScripts,
-			tasks.apt.CleanGoogleRepositoriesAndKeys,
+		security.EnableShadowConfig,
+		network.RemoveDNSInfo,
+		network.RemoveHostname,
+		network.ConfigureNetworkIF,
+		tasks.host.DisableIPv6,
+		tasks.host.SetHostname,
+		tasks.boot.ConfigureGrub,
+		initd.AddSSHKeyGeneration,
+		initd.InstallInitScripts,
+		tasks.apt.CleanGoogleRepositoriesAndKeys,
 
-			loopback.MoveImage,
-			tasks.image.CreateTarball,
-			tasks.image.RegisterImage,
-			])
+		loopback.MoveImage,
+		tasks.image.CreateTarball,
+		tasks.image.RegisterImage,
+		])
 
 	tasklist.update(bootstrapvz.common.task_sets.get_fs_specific_set(manifest.volume['partitions']))
 

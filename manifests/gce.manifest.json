@@ -14,7 +14,7 @@
 		"bootloader":   "grub",
 		"timezone":     "UTC",
 		"locale":       "en_US",
-		"charmap":      "UTF-8",
+		"charmap":      "UTF-8"
 	},
 	"packages": {
 		"mirror": "http://gce_debian_mirror.storage.googleapis.com/",
